@@ -1,0 +1,25 @@
+# Java
+*.class
+*.log
+
+# Maven
+/target/
+
+# Eclipse / STS
+.project
+.classpath
+.settings/
+.metadata/
+
+# Tomcat
+/work/
+/logs/
+temp/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Local config (보안)
+*.properties
+!application.properties.example
