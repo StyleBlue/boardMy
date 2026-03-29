@@ -3,17 +3,20 @@ package spring.mvc.boardMy.dto;
 import java.sql.Timestamp;
 
 public class BoardDTO {
-	private int num; // 글번호
-	private String writer; // 작성자
-	private String passwd; // 비밀번호
-	private String subject; // 제목
-	private String content; // 내용
-	private int readCnt; // 조회수
-	private int ref; // 그룹화 아이디
-	private int ref_step; // 글순서
-	private int ref_level; // 글레벨
-	private Timestamp reg_date; // 작성일
-	private String ip; // 아이피
+	private int num; // 湲踰덊샇
+	private String writer; // ?묒꽦??
+	private String passwd; // 鍮꾨?踰덊샇
+	private String subject; // ?쒕ぉ
+	private String content; // ?댁슜
+	private int readCnt; // 議고쉶??
+	private int ref; // 洹몃９???꾩씠??
+	private int ref_step; // 湲?쒖꽌
+	private int ref_level; // 湲?덈꺼
+	private Timestamp reg_date; // ?묒꽦??
+	private String ip; // ?꾩씠??
+	private String org_file_name; // ?좏븫 ?먮옒 ?뚯씪紐?
+	private String stored_file_name; // ?좏븫 ??ν븯??뚯씪紐?
+	private long file_size; // ?좏븫 ?뚯씪 ?ш린
 
 	public int getNum() {
 		return num;
@@ -101,5 +104,29 @@ public class BoardDTO {
 
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+
+	public String getOrg_file_name() {
+		return org_file_name;
+	}
+
+	public void setOrg_file_name(String org_file_name) {
+		this.org_file_name = org_file_name;
+	}
+
+	public String getStored_file_name() {
+		return stored_file_name;
+	}
+
+	public void setStored_file_name(String stored_file_name) {
+		this.stored_file_name = stored_file_name;
+	}
+
+	public long getFile_size() {
+		return file_size;
+	}
+
+	public void setFile_size(long file_size) {
+		this.file_size = file_size;
 	}
 }

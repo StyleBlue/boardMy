@@ -6,13 +6,13 @@
 <body onload="passwdFocus()">
 	<center style="margin-top: 350px; margin-bottom:50%;"><h2>글 수정</h2>
 
-	<form method="post" action="modifyView" name="passwordform" onsubmint="return passwdCheck()">
+	<form method="post" action="modifyView" name="passwordform" onsubmit="return passwdCheck()">
 	<input type="hidden" name="num" value="${num}">
 	<input type="hidden" name="pageNum" value="${pageNum}">
 	
 	<table>
 		<tr>
-			<th colspan="2">비밀번호를 다시 확인해 주세요!</th>
+			<th colspan="2">비밀번호를 다시 확인해 주세요</th>
 		</tr>
 		<tr>
 			<th>비밀번호</th>

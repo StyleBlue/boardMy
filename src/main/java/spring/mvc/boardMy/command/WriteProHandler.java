@@ -1,13 +1,19 @@
 package spring.mvc.boardMy.command;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import spring.mvc.boardMy.dao.BoardDAO;
 import spring.mvc.boardMy.dto.BoardDTO;
@@ -17,36 +23,93 @@ public class WriteProHandler implements CommandHandler {
 
 	@Autowired
 	BoardDAO bdao;
-	
+
 	@Override
 	public String execute(Model m) {
-
-		// FrontController 에서 보낸 Model에 담긴 request를 key와 value로 보내서 받았을때 Map으로
-		// 받는다.
-		// 값이 문자가 올지 숫자가 올지모르니 Object로 받는다.
 		Map<String, Object> map = m.asMap();
 		HttpServletRequest req = (HttpServletRequest) map.get("request");
+		HttpSession session = req.getSession(false);
+
+		if (session == null || session.getAttribute("loginMemberId") == null) {
+			return "redirect:loginForm?returnUrl=writeForm";
+		}
 
 		BoardDTO bdto = new BoardDTO();
-
-		bdto.setNum(Integer.parseInt(req.getParameter("num")));
-		bdto.setWriter(req.getParameter("writer"));
+		bdto.setNum(parseInt(req.getParameter("num"), 0));
+		bdto.setWriter(String.valueOf(session.getAttribute("loginMemberName")));
 		bdto.setPasswd(req.getParameter("passwd"));
 		bdto.setSubject(req.getParameter("subject"));
 		bdto.setContent(req.getParameter("content"));
-		bdto.setRef(Integer.parseInt(req.getParameter("ref")));
-		bdto.setRef_step(Integer.parseInt(req.getParameter("ref_step")));
-		bdto.setRef_level(Integer.parseInt(req.getParameter("ref_level")));
+		bdto.setRef(parseInt(req.getParameter("ref"), 1));
+		bdto.setRef_step(parseInt(req.getParameter("ref_step"), 0));
+		bdto.setRef_level(parseInt(req.getParameter("ref_level"), 0));
+		bdto.setReg_date(new Timestamp(System.currentTimeMillis()));
+		bdto.setIp(req.getRemoteAddr());
 
-		bdto.setReg_date(new Timestamp(System.currentTimeMillis())); // 타임스탬프
-																		// 불러오기
-		bdto.setIp(req.getRemoteAddr()); // 자기 아이피를 요쳥한다.
+		try {
+			if (req instanceof MultipartHttpServletRequest) {
+				MultipartHttpServletRequest multiReq = (MultipartHttpServletRequest) req;
+				MultipartFile uploadFile = multiReq.getFile("uploadFile");
+				handleUpload(uploadFile, req, bdto);
+			}
 
-		int cnt = bdao.insert(bdto);
+			int cnt = bdao.insert(bdto);
+			m.addAttribute("cnt", cnt);
+		} catch (IOException e) {
+			m.addAttribute("cnt", 0);
+		}
 
-		m.addAttribute("cnt", cnt);
 		m.addAttribute("pageNum", req.getParameter("pageNum"));
-
 		return "/board/writePro";
+	}
+
+	private int parseInt(String value, int defaultValue) {
+		if (value == null || value.trim().isEmpty()) {
+			return defaultValue;
+		}
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+			return defaultValue;
+		}
+	}
+
+	private void handleUpload(MultipartFile uploadFile, HttpServletRequest req, BoardDTO bdto) throws IOException {
+		if (uploadFile == null || uploadFile.isEmpty()) {
+			return;
+		}
+
+		String originalName = new File(uploadFile.getOriginalFilename()).getName();
+		if (originalName.trim().isEmpty()) {
+			return;
+		}
+
+		File uploadDir = resolveUploadDir(req);
+		if (!uploadDir.exists()) {
+			uploadDir.mkdirs();
+		}
+
+		String extension = "";
+		int dotIndex = originalName.lastIndexOf('.');
+		if (dotIndex > -1) {
+			extension = originalName.substring(dotIndex);
+		}
+
+		String storedName = UUID.randomUUID().toString().replace("-", "") + extension;
+		File targetFile = new File(uploadDir, storedName);
+		uploadFile.transferTo(targetFile);
+
+		bdto.setOrg_file_name(originalName);
+		bdto.setStored_file_name(storedName);
+		bdto.setFile_size(uploadFile.getSize());
+	}
+
+	private File resolveUploadDir(HttpServletRequest req) {
+		String catalinaBase = System.getProperty("catalina.base");
+		if (catalinaBase != null && !catalinaBase.trim().isEmpty()) {
+			return new File(catalinaBase, "upload/boardMy");
+		}
+		String realPath = req.getSession().getServletContext().getRealPath("/upload/boardMy");
+		return new File(realPath);
 	}
 }

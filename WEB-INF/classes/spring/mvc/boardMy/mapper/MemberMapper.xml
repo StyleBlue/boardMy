@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="spring.mvc.boardMy.dao.MemberDAO">
+
+	<insert id="insert" parameterType="spring.mvc.boardMy.dto.MemberDTO">
+		INSERT INTO members(member_id, member_name, passwd, reg_date)
+		VALUES(#{member_id}, #{member_name}, #{passwd}, #{reg_date})
+	</insert>
+
+	<select id="idCheck" parameterType="string" resultType="int">
+		SELECT COUNT(*) FROM members WHERE member_id = #{value}
+	</select>
+
+	<select id="getMember" parameterType="string" resultType="spring.mvc.boardMy.dto.MemberDTO">
+		SELECT member_id, member_name, passwd, reg_date
+		FROM members
+		WHERE member_id = #{value}
+	</select>
+
+	<select id="loginCheck" parameterType="spring.mvc.boardMy.dto.MemberDTO" resultType="spring.mvc.boardMy.dto.MemberDTO">
+		SELECT member_id, member_name, passwd, reg_date
+		FROM members
+		WHERE member_id = #{member_id}
+		  AND passwd = #{passwd}
+	</select>
+</mapper>

@@ -15,50 +15,54 @@ public class BoardDAOImpl implements BoardDAO {
 	@Autowired
 	private SqlSession sqlSession;
 
-	// 게시글 건수 조회
 	@Override
 	public int getCount() {
-		int cnt = 0;
-
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
-		cnt = iDao.getCount();
-
-		return cnt;
+		return iDao.getCount();
 	}
 
-	// 게시글 목록 조회
+	@Override
+	public int getSearchCount(Map<String, Object> searchMap) {
+		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
+		return iDao.getSearchCount(searchMap);
+	}
+
 	@Override
 	public ArrayList<BoardDTO> getArticles(Map<String, Integer> dtosMap) {
-
-		@SuppressWarnings("unused")
-		BoardDTO bdto = new BoardDTO();
-		ArrayList<BoardDTO> articles = null;
-
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
-		articles = iDao.getArticles(dtosMap);
-
-		return articles;
+		return iDao.getArticles(dtosMap);
 	}
 
-	// 글쓰기 - 제목글인 경우 (최대값 구하는 메소드)
+	@Override
+	public ArrayList<BoardDTO> getSearchArticles(Map<String, Object> searchMap) {
+		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
+		return iDao.getSearchArticles(searchMap);
+	}
+
 	@Override
 	public int getMaxNum() {
-		int maxNum = 0;
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
-		maxNum = iDao.getMaxNum();
-
-		return maxNum;
+		return iDao.getMaxNum();
 	}
 
-	// 글쓰기 - 답변글인 경우
-	public void updateReply(BoardDTO bdto) {
+	@Override
+	public int getMaxRefStep(int ref) {
+		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
+		return iDao.getMaxRefStep(ref);
+	}
 
+	@Override
+	public int getNextRefStep(BoardDTO bdto) {
+		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
+		return iDao.getNextRefStep(bdto);
+	}
+
+	@Override
+	public void updateReply(BoardDTO bdto) {
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
 		iDao.updateReply(bdto);
-
 	}
 
-	// 글작성
 	@Override
 	public int insert(BoardDTO bdto) {
 		int cnt = 0;
@@ -69,13 +73,10 @@ public class BoardDAOImpl implements BoardDAO {
 		int ref_level = bdto.getRef_level();
 
 		if (num == 0) {
-			cnt = getCount(); // 글 개수 가져오는 메소드
+			cnt = getCount();
 
-			// 글쓰기 - 답변글인 경우
 			if (cnt > 0) {
-				// ref = rs.getInt(1) +1; // ref: 그룹화 아이디 = 글번호 최대값 + 1
 				ref = getMaxNum() + 1;
-
 			} else {
 				ref = 1;
 			}
@@ -83,11 +84,15 @@ public class BoardDAOImpl implements BoardDAO {
 			bdto.setRef(ref);
 			ref_step = 0;
 			ref_level = 0;
-
 		} else {
-			updateReply(bdto); // 메소드 생성
-
-			ref_step++;
+			int nextRefStep = getNextRefStep(bdto);
+			if (nextRefStep == 0) {
+				ref_step = getMaxRefStep(ref) + 1;
+			} else {
+				ref_step = nextRefStep;
+				bdto.setRef_step(ref_step);
+				updateReply(bdto);
+			}
 			ref_level++;
 		}
 
@@ -96,92 +101,56 @@ public class BoardDAOImpl implements BoardDAO {
 
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
 		cnt = iDao.insert(bdto);
-
 		return cnt;
 	}
 
-	// 상세 페이지, 수정내역 페이지
 	@Override
 	public BoardDTO getArticle(int num) {
-
-		BoardDTO bdto = new BoardDTO();
-
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
-		bdto = iDao.getArticle(num);
-
-		return bdto;
+		return iDao.getArticle(num);
 	}
 
 	@Override
 	public void addReadCnt(int num) {
-
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
 		iDao.addReadCnt(num);
-
 	}
 
 	@Override
 	public int pwdCheck(Map<String, Object> dtosMap) {
-		int cnt = 0;
-
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
-		cnt = iDao.pwdCheck(dtosMap);
-
-		/*if (cnt > 0) {
-			cnt = 1;
-		} else {
-			cnt = 0;
-		}*/
-		return cnt;
+		return iDao.pwdCheck(dtosMap);
 	}
 
-	// 게시글 수정
 	@Override
 	public int update(BoardDTO bdto) {
-		int cnt = 0;
-
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
-		cnt = iDao.update(bdto);
-
-		return cnt;
+		return iDao.update(bdto);
 	}
-
-	// 게시글 삭제
 
 	@Override
 	public int checkReply(BoardDTO bdto) {
-		int cnt = 0;
-		
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
-		cnt = iDao.checkReply(bdto); // xml에서 resultType="int" , SELECT COUNT(*)
-		
-		return cnt;
+		return iDao.checkReply(bdto);
 	}
 
 	@Override
 	public void updateRef_step(BoardDTO bdto) {
-		
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
 		iDao.updateRef_step(bdto);
 	}
 	
 	@Override
-	public int delete(int num) { // int num 변수명 달라도 상관없음.
+	public int delete(int num) {
 		int cnt = 0;
 		BoardDAO iDao = this.sqlSession.getMapper(BoardDAO.class);
-		
-		BoardDTO bdto = getArticle(num); // 글 개수 가져오는 메소드
-		
+		BoardDTO bdto = getArticle(num);
 		int chkRepCnt = checkReply(bdto);
 		
-		// 답글이 있는 경우
-		if(chkRepCnt > 0) {
+		if (chkRepCnt > 0) {
 			cnt = -1;
-		
-		// 답글이 없는 경우
 		} else {
 			updateRef_step(bdto);
-			
 			iDao.delete(num);
 		}
 		return cnt;

@@ -4,7 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <h2>글삭제</h2>
-<!-- 비밀번호가 다른경우 -->
+<!-- 비밀번호가 틀린 경우 -->
 <c:if test="${pwdCnt == 0}">
 	<script type="text/javascript">
 		errorAlert(passwdError);
@@ -23,7 +23,7 @@
 	</script>
 </c:if>
 
-<!-- 답글이 없는 경우 삭제 실패-->
+<!-- 답글이 없는 경우 삭제 실패 -->
 <c:if test="${deleteCnt == 1}">
 	<script type="text/javascript">
 	errorAlert(deleteError);

@@ -7,13 +7,13 @@
 	
 	<c:if test="${cnt == 0}">
 		<script type="text/javascript">
-			errorAlert();
+			errorAlert(modifyError);
 		</script>
 	</c:if>
 	
 	<c:if test="${cnt != 0}">
 		<script type="text/javascript">
-			alert("글이 수정되었습니다.!!");
+			alert("글이 수정되었습니다.");
 		</script>
 		<c:redirect url="list?pageNum=${pageNum}" />	
 	</c:if>

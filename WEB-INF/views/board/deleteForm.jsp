@@ -5,10 +5,10 @@
 <html>
 <body onload="passwdFocus()">
 
-	<!-- 글삭제 -->
+	<!-- 글 삭제 -->
 	
 	<center style="margin-top: 350px; margin-bottom:50%;">
-	<form method="post" action="deletePro" name="passwdform" onsubmit="return passwdCheck()">
+	<form method="post" action="deletePro" name="passwordform" onsubmit="return passwdCheck()">
 		
 	<input type="hidden" name="num" value="${num}">
 	<input type="hidden" name="pageNum" value="${pageNum}">
@@ -16,7 +16,7 @@
 	<table>
 		<tr>
 			<th colspan="2">
-				비밀번호를 다시 확인하세요.
+				비밀번호를 다시 확인해 주세요
 			</th>
 		</tr>
 		<tr>

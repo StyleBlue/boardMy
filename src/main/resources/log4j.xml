@@ -14,6 +14,18 @@
 	<logger name="spring.mvc.boardMy">
 		<level value="info" />
 	</logger>
+
+	<logger name="spring.mvc.boardMy.dao.BoardDAO">
+		<level value="debug" />
+	</logger>
+
+	<logger name="spring.mvc.boardMy.dao.MemberDAO">
+		<level value="debug" />
+	</logger>
+
+	<logger name="org.apache.ibatis">
+		<level value="debug" />
+	</logger>
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">

@@ -20,9 +20,7 @@
 		
 		<table>
 			<tr>
-				<th colspan="2">
-				수정할 정보를 입력하세요.
-				</th>
+				<th colspan="2">수정할 정보를 입력해 주세요</th>
 			</tr>
 			<tr>
 				<th>작성자</th>
@@ -34,7 +32,7 @@
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td><textarea class="input" row="10" col="38" name="content" style="width:260px; height:150px;">${bdto.content}</textarea></td>
+				<td><textarea class="input" rows="10" cols="38" name="content" style="width:260px; height:150px;">${bdto.content}</textarea></td>
 			</tr>
 			<tr>
 				<th>비밀번호</th>

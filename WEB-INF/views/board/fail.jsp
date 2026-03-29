@@ -13,7 +13,7 @@
 	<tr>
 	<td>
 	<h2>비밀번호가 일치하지 않습니다.</h2>
-	<middle style="color:red">비밀번호를 다시 확인 해주세요.</middle>
+	<middle style="color:red">비밀번호를 다시 확인해 주세요.</middle>
 	</td>
 	</tr>
 	<tr>
